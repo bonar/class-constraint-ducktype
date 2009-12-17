@@ -48,16 +48,55 @@ Class::Constraint::DuckType - specify subs that classes must implement
       decrypt
   /);
   1;
-
+  
   package Cipher::Caesar;
   use Constraint::Cipher;
   sub encrypt { }
   1;
-
+  
   package main;
   use Cipher::Caesar; # croak! decrypt not implemented
 
 =head1 DESCRIPTION
+
+This module allows you to create simple constraint class.
+You can force the class to implement a specific method.
+first of all, create a constraint class:
+
+  package Constraint::Serializable;
+  use Class::Constraint::DuckType;
+  Class::Constraint::DuckType->implements(qw/
+      serialize
+  /);
+
+All the modules that use Constraint::Serializable must
+implement serialize() method. following package is ok:
+
+  package Foo;
+  use Constraint::Serializable;
+  sub serialize { }
+
+following package croaks when used:
+
+  package Bar;
+  use Constraint::Serializable;
+  sub bar { }
+
+so you can use this constraint like this:
+
+  if ($object->isa('Constraint::Serializable')) {
+      print $object->serialize();
+  }
+
+=head1 METHOD
+
+=over
+
+=item implements(@method)
+
+add @method to caller constraint list.
+
+=back
 
 =head1 AUTHOR
 
